@@ -58,6 +58,7 @@ impl OutputKind {
 
 #[derive(Debug)]
 pub(crate) enum AppEvent {
+    Summary(crate::runner::summary::TestSummary),
     Project(crate::project::Project),
     RunStarted,
     ListStatus(TestListStatus),

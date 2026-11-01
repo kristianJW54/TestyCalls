@@ -1,4 +1,5 @@
 mod demo;
+pub(crate) mod summary;
 mod project;
 
 use crate::messages::{AppEvent, RunnerCommand};

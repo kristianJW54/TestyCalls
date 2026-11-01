@@ -52,6 +52,14 @@ impl DemoRun {
                 self.last_completed = Some(completed);
             }
             if completed == 10 {
+                events.push(AppEvent::Summary(super::summary::TestSummary {
+                    passed: 8,
+                    failed: 2,
+                    ignored: 0,
+                    measured: 0,
+                    filtered: 0,
+                    seconds: 4.0,
+                }));
                 events.push(AppEvent::RunFinished);
                 self.started = None;
             }

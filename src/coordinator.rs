@@ -89,6 +89,15 @@ impl Coordinator {
     }
 
     pub(crate) async fn handle_runner_event(&mut self, event: AppEvent) -> io::Result<()> {
+        if let AppEvent::Output {
+            kind: crate::messages::OutputKind::Results,
+            line,
+        } = &event
+        {
+            if let Some(summary) = crate::runner::summary::TestSummary::parse(line) {
+                let _ = self.app_updates.send(AppEvent::Summary(summary)).await;
+            }
+        }
         if let AppEvent::Project(project) = &event {
             self.project = project.clone();
         }

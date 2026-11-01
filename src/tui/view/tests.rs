@@ -4,6 +4,49 @@ use crossterm::event::KeyCode;
 use ratatui::{Terminal, backend::TestBackend};
 
 #[test]
+fn shrinking_width_preserves_room_for_output() {
+    for height in [24, 30, 40] {
+        let mut previous_height = u16::MAX;
+        for width in [120, 80, 64, 60, 40] {
+            let layout = layout::ScreenLayout::new(ratatui::layout::Rect::new(0, 0, width, height));
+            assert!(layout.test_info.height <= previous_height);
+            previous_height = layout.test_info.height;
+            assert!(layout.test_output.height >= 5);
+            assert!(layout.failures.height >= 3);
+        }
+    }
+}
+
+#[test]
+fn compact_metrics_stay_beside_the_phase_chain() {
+    let mut view = AppView::new();
+    view.apply_event(AppEvent::Progress {
+        completed: 10,
+        total: 10,
+    });
+    view.apply_event(AppEvent::Summary(crate::runner::summary::TestSummary {
+        passed: 8,
+        failed: 2,
+        ignored: 0,
+        measured: 0,
+        filtered: 3,
+        seconds: 4.0,
+    }));
+    view.apply_event(AppEvent::RunFinished);
+    let mut terminal = Terminal::new(TestBackend::new(60, 30)).unwrap();
+    terminal.draw(|frame| view.render(frame)).unwrap();
+    let layout = layout::ScreenLayout::new(ratatui::layout::Rect::new(0, 0, 60, 30));
+    let buffer = terminal.backend().buffer();
+    for (offset, label, value) in [(0, "PASSED", "8"), (1, "FAILED", "2"), (2, "TIME", "4.00s")] {
+        let row: String = (32..59)
+            .map(|x| buffer[(x, layout.test_info.y + offset)].symbol())
+            .collect();
+        assert!(row.contains(label), "missing {label}: {row}");
+        assert!(row.contains(value), "missing {value}: {row}");
+    }
+}
+
+#[test]
 fn events_update_the_correct_display_state() {
     let mut view = AppView::new();
     view.apply_event(AppEvent::RunStarted);

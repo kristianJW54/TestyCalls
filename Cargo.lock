@@ -1808,6 +1808,7 @@ dependencies = [
  "futures",
  "notify",
  "ratatui",
+ "serde",
  "serde_json",
  "throbber-widgets-tui",
  "tokio",

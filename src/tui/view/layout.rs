@@ -12,7 +12,7 @@ pub(super) struct ScreenLayout {
 
 impl ScreenLayout {
     pub fn new(area: Rect) -> Self {
-        let large_title = area.width >= 42 && area.height >= 26;
+        let large_title = area.width >= 64 && area.height >= 36;
         let [header, project_area, body, footer] = Layout::vertical([
             Constraint::Length(if large_title { 4 } else { 1 }),
             Constraint::Length(4),
@@ -21,11 +21,16 @@ impl ScreenLayout {
         ])
         .areas(area);
 
-        // Give test info a quarter of the body (at least eight rows when
-        // space permits). Share the remaining height between output streams.
         let [test_info, output_area] = Layout::vertical([
-            Constraint::Length((body.height / 4).max(6)),
-            Constraint::Min(9),
+            Constraint::Length(
+                (if body.width >= 64 && body.height >= 24 {
+                    12
+                } else {
+                    8
+                })
+                .min(body.height / 2),
+            ),
+            Constraint::Min(6),
         ])
         .areas(body);
         let results_area = output_area;

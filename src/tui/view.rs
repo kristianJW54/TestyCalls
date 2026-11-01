@@ -33,6 +33,7 @@ impl AppView {
 
     pub(super) fn apply_event(&mut self, event: AppEvent) {
         match event {
+            AppEvent::Summary(summary) => self.test_info.summary = Some(summary),
             AppEvent::Project(project) => {
                 if let Some(error) = &project.error {
                     self.outputs[2]
@@ -95,9 +96,8 @@ impl AppView {
             );
         }
 
-        let commands = "? Commands · c Compiler · r Refresh demo · Enter Run demo · q Quit";
         frame.render_widget(
-            Paragraph::new(commands)
+            Paragraph::new("? Commands · c Compiler · r Refresh demo · Enter Run demo · q Quit")
                 .block(panel("Commands").border_style(Style::default().fg(Color::Rgb(60, 60, 60)))),
             footer,
         );
