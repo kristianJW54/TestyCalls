@@ -1,4 +1,6 @@
 mod output;
+mod project;
+pub(crate) use project::ProjectIndicator;
 mod test_info;
 mod test_list;
 mod theme;

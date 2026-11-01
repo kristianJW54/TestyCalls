@@ -1,4 +1,5 @@
 mod demo;
+mod project;
 
 use crate::messages::{AppEvent, RunnerCommand};
 use tokio::sync::mpsc::{Receiver, Sender};
@@ -20,6 +21,7 @@ impl ProcessRunner {
             tokio::select! {
                 command = self.commands.recv() => {
                     match command {
+                        Some(RunnerCommand::OpenProject(selected)) => project::open(selected, &self.events).await,
                         Some(RunnerCommand::RunDemo) => demo.start(),
                         None => break,
                     }

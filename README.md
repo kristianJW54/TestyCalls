@@ -32,6 +32,20 @@ cd TestyCalls
 cargo run
 ```
 
+Open a different codebase by passing its directory:
+
+```sh
+cargo run -- "C:\projects\my-rust-project"
+# Or, when invoking the built executable:
+testycalls "C:\projects\my-rust-project"
+```
+
+Without an argument, TestyCalls opens the current directory. The project header
+shows **Opening → Validating → Connected**. Validation runs Cargo metadata in
+the selected directory; errors are available in the compiler popup (`c`).
+The selected directory and Cargo workspace root are stored separately.
+Project validation is real; test runs and list compilation remain demos.
+
 Press **r** or **Enter** to play the sample run:
 
 ```text

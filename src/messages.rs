@@ -1,11 +1,21 @@
+use std::path::PathBuf;
+
 #[derive(Debug, Clone, Copy)]
 pub(crate) enum AppCommand {
     RefreshList,
     RunTests,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
+pub(crate) struct CommandSpec {
+    program: String,
+    args: Vec<String>,
+    working_dir: PathBuf,
+}
+
+#[derive(Debug, Clone)]
 pub(crate) enum RunnerCommand {
+    OpenProject(crate::project::Project),
     RunDemo,
 }
 
@@ -48,6 +58,7 @@ impl OutputKind {
 
 #[derive(Debug)]
 pub(crate) enum AppEvent {
+    Project(crate::project::Project),
     RunStarted,
     ListStatus(TestListStatus),
     Progress { completed: usize, total: usize },

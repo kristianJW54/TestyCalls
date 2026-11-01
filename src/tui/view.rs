@@ -6,7 +6,7 @@ mod popups;
 mod tests;
 
 use self::layout::ScreenLayout;
-use super::components::{OutputPanel, TestInfo, TestListIndicator, panel};
+use super::components::{OutputPanel, ProjectIndicator, TestInfo, TestListIndicator, panel};
 use crate::messages::{AppEvent, RunPhase};
 use ratatui::{
     Frame,
@@ -23,21 +23,24 @@ pub(super) struct AppView {
     focused_output: usize,
     output_areas: [Rect; 3],
     popup: Option<&'static str>,
-    project_path: String,
+    project: ProjectIndicator,
 }
 
 impl AppView {
     pub(super) fn new() -> Self {
-        Self {
-            project_path: std::env::current_dir()
-                .map(|path| path.display().to_string())
-                .unwrap_or_else(|_| "Working directory unavailable".into()),
-            ..Self::default()
-        }
+        Self::default()
     }
 
     pub(super) fn apply_event(&mut self, event: AppEvent) {
         match event {
+            AppEvent::Project(project) => {
+                if let Some(error) = &project.error {
+                    self.outputs[2]
+                        .lines
+                        .extend(error.lines().map(str::to_owned));
+                }
+                self.project.project = Some(project);
+            }
             AppEvent::RunStarted => {
                 self.test_info = TestInfo::default();
                 self.test_info.phase = RunPhase::Preparing;
@@ -55,6 +58,7 @@ impl AppView {
 
     pub(super) fn tick(&mut self) {
         self.test_info.tick();
+        self.project.tick();
         self.test_list_status.tick();
     }
 

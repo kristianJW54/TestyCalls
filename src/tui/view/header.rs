@@ -31,13 +31,7 @@ impl AppView {
         frame.render_widget(project_block, project_area);
         let [path_area, list_status] =
             Layout::vertical([Constraint::Length(1), Constraint::Length(1)]).areas(project_inner);
-        let display_path = self.project_path.replace('\\', " / ");
-        frame.render_widget(
-            Paragraph::new(format!("Project  ·  {display_path}"))
-                .style(Style::default().fg(Color::Rgb(140, 140, 140)))
-                .block(Block::new().padding(Padding::horizontal(1))),
-            path_area,
-        );
+        self.project.render(frame, path_area);
         self.test_list_status.render(frame, list_status);
     }
 }
